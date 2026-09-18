@@ -1,7 +1,7 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-const supabaseUrl = 'AQUI_TU_URL'
-const supabaseKey = 'AQUI_TU_ANON_KEY'
+const supabaseUrl = 'iufsuoyvkvlynvjtmhrn'
+const supabaseKey = 'sb_publishable_taknOjxD4zmLoc9pX-9bhQ_GULCKb_U'
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 async function cargarProductos() {
