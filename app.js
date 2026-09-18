@@ -6,7 +6,7 @@ const supabase = createClient(supabaseUrl, supabaseKey)
 
 async function cargarProductos() {
     const contenedor = document.getElementById('contenedor')
-    const { data, error } = await supabase.from('productos').select('*')
+    const { data, error } = await supabase.from('Productos').select('*')
 
     if (error) {
         contenedor.innerHTML = '<p>Error al cargar datos</p>'
