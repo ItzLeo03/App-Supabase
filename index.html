@@ -24,6 +24,12 @@
     <div class="main-layout">
         <div class="container">
             <h2>Catalogo de Productos</h2>
+            <label class="category-filter" for="filtro-categoria">
+                Categoría:
+                <select id="filtro-categoria">
+                    <option value="todas">Todas</option>
+                </select>
+            </label>
             <div id="contenedor" class="grid">
                 <p>Cargando productos...</p>
             </div>
@@ -42,6 +48,24 @@
         </div>
     </div>
 
+    <button id="btn-nueva-conversacion" type="button" aria-label="Borrar conversación">
+        Borrar conversación
+    </button>
+
+    <script>
+        sessionStorage.clear()
+
+        document.getElementById('btn-nueva-conversacion').addEventListener('click', () => {
+            const confirmar = window.confirm('¿Quieres borrar la conversación y comenzar de nuevo?')
+
+            if (confirmar) {
+                sessionStorage.clear()
+                window.location.reload()
+            }
+        })
+    </script>
     <script type="module" src="app.js"></script>
+    <script src="https://cdn.botpress.cloud/webchat/v5.0/inject.js"></script>
+    <script src="https://files.bpcontent.cloud/2026/11/02/09/20261102092353-6EX7TO58.js" defer></script>
 </body>
 </html>

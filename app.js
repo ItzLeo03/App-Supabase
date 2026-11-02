@@ -6,6 +6,8 @@ const supabase = createClient(supabaseUrl, supabaseKey)
 
 let carrito = []
 let esRegistro = false
+let productos = []
+let categoriaSeleccionada = 'todas'
 
 async function cargarProductos() {
     const contenedor = document.getElementById('contenedor')
@@ -16,8 +18,49 @@ async function cargarProductos() {
         return
     }
 
+    productos = data
+    prepararFiltroCategorias()
+    mostrarProductos()
+}
+
+function prepararFiltroCategorias() {
+    const filtroCategoria = document.getElementById('filtro-categoria')
+    const categorias = [...new Set(
+        productos
+            .map(producto => producto.categoria?.trim())
+            .filter(Boolean)
+    )].sort((a, b) => a.localeCompare(b, 'es'))
+
+    filtroCategoria.innerHTML = '<option value="todas">Todas</option>'
+    categorias.forEach(categoria => {
+        const opcion = document.createElement('option')
+        opcion.value = categoria
+        opcion.textContent = categoria
+        filtroCategoria.appendChild(opcion)
+    })
+
+    filtroCategoria.value = categorias.includes(categoriaSeleccionada)
+        ? categoriaSeleccionada
+        : 'todas'
+    filtroCategoria.addEventListener('change', () => {
+        categoriaSeleccionada = filtroCategoria.value
+        mostrarProductos()
+    })
+}
+
+function mostrarProductos() {
+    const contenedor = document.getElementById('contenedor')
+    const productosFiltrados = categoriaSeleccionada === 'todas'
+        ? productos
+        : productos.filter(producto => producto.categoria === categoriaSeleccionada)
+
     contenedor.innerHTML = ''
-    data.forEach(producto => {
+    if (productosFiltrados.length === 0) {
+        contenedor.innerHTML = '<p>No hay productos en esta categoría.</p>'
+        return
+    }
+
+    productosFiltrados.forEach(producto => {
         const tarjeta = document.createElement('div')
         tarjeta.className = 'card'
         tarjeta.innerHTML = `

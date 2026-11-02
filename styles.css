@@ -64,6 +64,24 @@ header h1 {
     flex: 2;
 }
 
+.category-filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 16px;
+    font-weight: bold;
+}
+
+#filtro-categoria {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    font-size: 14px;
+}
+
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -168,6 +186,38 @@ header h1 {
     background: #218838;
 }
 
+#btn-nueva-conversacion {
+    position: fixed;
+    right: 24px;
+    bottom: 96px;
+    z-index: 1001;
+    border: 1px solid #d5dbe3;
+    border-radius: 999px;
+    padding: 8px 12px;
+    background: #fff;
+    color: #333;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    font-size: 12px;
+}
+
+#btn-nueva-conversacion:hover {
+    background: #f1f3f5;
+}
+
+/* Botpress mantiene el boton y la ventana del chat en la esquina inferior derecha. */
+#bp-web-widget-container {
+    position: fixed !important;
+    right: 24px !important;
+    bottom: 24px !important;
+    z-index: 1000 !important;
+    filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.18));
+}
+
+#bp-web-widget-container iframe {
+    border-radius: 16px;
+}
+
 @media (max-width: 700px) {
     header,
     .main-layout {
@@ -176,5 +226,15 @@ header h1 {
 
     .auth-container {
         flex-wrap: wrap;
+    }
+
+    #bp-web-widget-container {
+        right: 12px !important;
+        bottom: 12px !important;
+    }
+
+    #btn-nueva-conversacion {
+        right: 12px;
+        bottom: 84px;
     }
 }
