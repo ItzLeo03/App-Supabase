@@ -5,6 +5,7 @@ const supabaseKey = 'sb_publishable_taknOjxD4zmLoc9pX-9bhQ_GULCKb_U'
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 let carrito = []
+let esRegistro = false
 
 async function cargarProductos() {
     const contenedor = document.getElementById('contenedor')
@@ -29,6 +30,87 @@ async function cargarProductos() {
         `
         contenedor.appendChild(tarjeta)
     })
+}
+
+window.alternarModo = function() {
+    esRegistro = !esRegistro
+    const btnModo = document.getElementById('btn-modo')
+    const btnAuth = document.querySelector('#auth-section button:not(#btn-modo)')
+
+    if (esRegistro) {
+        btnAuth.textContent = 'Registrarse'
+        btnModo.textContent = 'Ya tengo cuenta'
+    } else {
+        btnAuth.textContent = 'Iniciar Sesión'
+        btnModo.textContent = 'Registrarse'
+    }
+}
+
+window.manejarAuth = async function() {
+    const username = document.getElementById('username-input').value.trim()
+    const password = document.getElementById('password-input').value
+
+    if (!username || !password) {
+        alert('Por favor completa todos los campos.')
+        return
+    }
+
+    const emailFicticio = `${username.toLowerCase()}@electroparts.local`
+
+    if (esRegistro) {
+        const { data, error } = await supabase.auth.signUp({ 
+            email: emailFicticio, 
+            password,
+            options: {
+                data: { nombre_usuario: username }
+            }
+        })
+
+        if (error) {
+            alert('Error en el registro: ' + error.message)
+            return
+        }
+
+        alert('¡Cuenta creada con éxito! Ahora puedes iniciar sesión.')
+        window.alternarModo()
+    } else {
+        const { data, error } = await supabase.auth.signInWithPassword({ 
+            email: emailFicticio, 
+            password 
+        })
+
+        if (error) {
+            alert('Usuario o contraseña incorrectos.')
+            return
+        }
+        
+        alert('¡Bienvenido de nuevo, ' + username + '!')
+        verificarSesion()
+    }
+}
+
+async function verificarSesion() {
+    const { data: { session } } = await supabase.auth.getSession()
+    const authSection = document.getElementById('auth-section')
+    const userInfo = document.getElementById('user-info')
+    const saludoUsuario = document.getElementById('saludo-usuario')
+
+    if (session) {
+        authSection.style.display = 'none'
+        userInfo.style.display = 'block'
+        
+        const nombreUsuario = session.user.user_metadata?.nombre_usuario || session.user.email.split('@')[0]
+        saludoUsuario.textContent = `Hola, ${nombreUsuario}`
+    } else {
+        authSection.style.display = 'flex'
+        userInfo.style.display = 'none'
+    }
+}
+
+window.cerrarSesion = async function() {
+    await supabase.auth.signOut()
+    alert('Sesión cerrada.')
+    verificarSesion()
 }
 
 window.agregarAlCarrito = function(nombre, precio) {
@@ -78,3 +160,4 @@ function actualizarCarrito() {
 }
 
 cargarProductos()
+verificarSesion()
