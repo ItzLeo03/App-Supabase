@@ -47,22 +47,33 @@ window.alternarModo = function() {
 }
 
 window.manejarAuth = async function() {
-    const username = document.getElementById('username-input').value.trim()
+    const usernameOriginal = document.getElementById('username-input').value.trim()
     const password = document.getElementById('password-input').value
 
-    if (!username || !password) {
+    if (!usernameOriginal || !password) {
         alert('Por favor completa todos los campos.')
         return
     }
 
-    const emailFicticio = `${username.toLowerCase()}@electroparts.local`
+    if (!/^[a-zA-Z0-9._-]{3,30}$/.test(usernameOriginal)) {
+        alert('El usuario debe tener entre 3 y 30 caracteres y solo puede usar letras, números, punto, guion o guion bajo.')
+        return
+    }
+
+    if (password.length < 6) {
+        alert('La contraseña debe tener al menos 6 caracteres.')
+        return
+    }
+
+    const username = usernameOriginal.toLowerCase()
+    const emailInterno = `${username}@electroparts.local`
 
     if (esRegistro) {
-        const { data, error } = await supabase.auth.signUp({ 
-            email: emailFicticio, 
+        const { data, error } = await supabase.auth.signUp({
+            email: emailInterno,
             password,
             options: {
-                data: { nombre_usuario: username }
+                data: { nombre_usuario: usernameOriginal }
             }
         })
 
@@ -71,12 +82,16 @@ window.manejarAuth = async function() {
             return
         }
 
-        alert('¡Cuenta creada con éxito! Ahora puedes iniciar sesión.')
+        if (!data.session) {
+            alert('La cuenta se creó, pero Supabase está solicitando confirmación por correo. Desactiva "Confirm email" en Authentication > Providers > Email para usar solo usuario y contraseña.')
+        } else {
+            alert('¡Cuenta creada con éxito!')
+        }
         window.alternarModo()
     } else {
-        const { data, error } = await supabase.auth.signInWithPassword({ 
-            email: emailFicticio, 
-            password 
+        const { error } = await supabase.auth.signInWithPassword({
+            email: emailInterno,
+            password
         })
 
         if (error) {
@@ -84,7 +99,7 @@ window.manejarAuth = async function() {
             return
         }
         
-        alert('¡Bienvenido de nuevo, ' + username + '!')
+        alert('¡Bienvenido de nuevo, ' + usernameOriginal + '!')
         verificarSesion()
     }
 }
